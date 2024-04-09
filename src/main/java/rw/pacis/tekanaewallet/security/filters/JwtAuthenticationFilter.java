@@ -48,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		final String requestUri = request.getRequestURI();
 		final String authHeader = request.getHeader("Authorization");
+
 		final String jwt;
 
 		if (Arrays.stream(SecurityConfig.AUTH_WHITELIST).anyMatch(pattern -> PATH_MATCHER.match(pattern, requestUri))) {

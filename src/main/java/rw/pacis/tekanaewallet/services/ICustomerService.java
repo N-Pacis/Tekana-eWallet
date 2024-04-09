@@ -18,7 +18,7 @@ public interface ICustomerService {
 
     Customer create(RegisterCustomerDTO dto) throws BadRequestException;
 
-    CustomerWallet createWallet(UUID customerId, RegisterCustomerWalletDTO dto) throws ResourceNotFoundException;
+    CustomerWallet createWallet(UUID customerId, RegisterCustomerWalletDTO dto) throws ResourceNotFoundException, BadRequestException;
 
     List<CustomerWallet> getMyWallets() throws ResourceNotFoundException;
 
@@ -28,5 +28,5 @@ public interface ICustomerService {
 
     CustomerWallet getWalletById(String id) throws ResourceNotFoundException;
 
-    Page<Customer> searchAll(String q, EUserStatus status, EGender gender, Pageable pageable);
+    Page<Customer> searchAll(String q, EUserStatus status, Pageable pageable);
 }

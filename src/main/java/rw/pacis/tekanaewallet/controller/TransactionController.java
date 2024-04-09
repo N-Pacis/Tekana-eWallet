@@ -40,7 +40,7 @@ public class TransactionController extends BaseController{
             @RequestParam(value = "customerId", required = false) UUID customerId,
             @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) throws BadRequestException {
 
-        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page - 1, limit, sort);
         Page<Transaction> transactions = this.transactionService.getAllTransactions(startDate, endDate, fromAmount, toAmount, customerId, pageable);
         return ResponseEntity.ok(
@@ -49,18 +49,19 @@ public class TransactionController extends BaseController{
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    @GetMapping(value = "/myTransactions")
+    @GetMapping(value = "/myTransactions/{walletId}")
     public ResponseEntity<ApiResponse<Page<GetMyTransactionDTO>>> getMyTransactions(
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(value = "startDate", required = false) LocalDate startDate,
             @RequestParam(value = "endDate", required = false) LocalDate endDate,
             @RequestParam(value = "fromAmount", required = false) BigDecimal fromAmount,
             @RequestParam(value = "toAmount", required = false) BigDecimal toAmount,
+            @PathVariable(value = "walletId") String walletId,
             @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) throws BadRequestException, ResourceNotFoundException {
 
-        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page - 1, limit, sort);
-        Page<GetMyTransactionDTO> transactions = this.transactionService.getMyTransactions(startDate, endDate, fromAmount, toAmount, pageable);
+        Page<GetMyTransactionDTO> transactions = this.transactionService.getMyTransactions(walletId, startDate, endDate, fromAmount, toAmount, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(transactions, localize("responses.getListSuccess"), HttpStatus.OK)
         );

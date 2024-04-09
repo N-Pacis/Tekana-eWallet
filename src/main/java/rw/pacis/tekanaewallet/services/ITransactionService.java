@@ -19,5 +19,5 @@ public interface ITransactionService {
     Page<Transaction> getAllTransactions(LocalDate startDate, LocalDate endDate, BigDecimal fromAmount, BigDecimal toAmount, UUID customerId, Pageable pageable) throws BadRequestException;
 
 
-    Page<GetMyTransactionDTO> getMyTransactions(LocalDate startDate, LocalDate endDate, BigDecimal fromAmount, BigDecimal toAmount, Pageable pageable) throws ResourceNotFoundException, BadRequestException;
+    Page<GetMyTransactionDTO> getMyTransactions(String walletId, LocalDate startDate, LocalDate endDate, BigDecimal fromAmount, BigDecimal toAmount, Pageable pageable) throws ResourceNotFoundException, BadRequestException;
 }

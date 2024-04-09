@@ -1,5 +1,7 @@
 package rw.pacis.tekanaewallet.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import rw.pacis.tekanaewallet.model.UserAccount;
@@ -13,5 +15,5 @@ public interface IUserAccountLoginHistoryRepository extends JpaRepository<UserAc
 
     Integer countAllByUserAndUserAgent(UserAccount user, String userAgent);
 
-    List<UserAccountLoginHistory> findByUserOrderByCreatedAtDesc(UserAccount user);
+    Page<UserAccountLoginHistory> findByUser(UserAccount user, Pageable pageable);
 }

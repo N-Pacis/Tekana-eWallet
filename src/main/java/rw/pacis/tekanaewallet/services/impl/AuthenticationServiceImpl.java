@@ -76,6 +76,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             return LoginResponseDTO.builder().token(jwt).build();
 
         }catch(Exception e){
+            if(user != null && (user.getStatus().equals(EUserStatus.INACTIVE) || user.getStatus().equals(EUserStatus.PENDING)) )
+                throw new InvalidCredentialsException("exceptions.badRequest.accountLocked");
             log.info("Exception: " + e.getMessage());
             throw new InvalidCredentialsException("exceptions.invalidEmailPassword");
         }
@@ -116,6 +118,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
         UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "Password updated");
         this.userAccountAuditRepository.save(audit);
+
+        this.invalidateUserLogin(userAccount);
 
         return userAccount;
     }

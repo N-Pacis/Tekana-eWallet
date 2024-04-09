@@ -30,23 +30,6 @@ import java.util.UUID;
 public class CustomerController extends BaseController{
     private final ICustomerService customerService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping(value = "/search")
-    public ResponseEntity<ApiResponse<Page<Customer>>> searchAll(
-            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
-            @RequestParam(value = "q",required = false,defaultValue = "") String query,
-            @RequestParam(value = "status", required = false) EUserStatus status,
-            @RequestParam(value = "gender", required = false) EGender gender,
-            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit){
-
-        Pageable pageable = PageRequest.of(page-1, limit);
-
-        Page<Customer> customers = this.customerService.searchAll(query, status, gender, pageable);
-        return ResponseEntity.ok(
-                new ApiResponse<>(customers, localize("responses.getListSuccess"), HttpStatus.OK)
-        );
-    }
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Customer>> register(@Valid @RequestBody RegisterCustomerDTO dto) throws BadRequestException {
         Customer customer = this.customerService.create(dto);
@@ -57,7 +40,7 @@ public class CustomerController extends BaseController{
     @PostMapping("/{id}/wallets/register")
     public ResponseEntity<ApiResponse<CustomerWallet>> registerCustomerWallet(
             @PathVariable(value = "id") UUID id,
-            @Valid @RequestBody RegisterCustomerWalletDTO dto) throws ResourceNotFoundException {
+            @Valid @RequestBody RegisterCustomerWalletDTO dto) throws ResourceNotFoundException, BadRequestException {
         CustomerWallet wallet = this.customerService.createWallet(id, dto);
         return ResponseEntity.ok(new ApiResponse<>(wallet, localize("responses.saveEntitySuccess"), HttpStatus.CREATED));
     }

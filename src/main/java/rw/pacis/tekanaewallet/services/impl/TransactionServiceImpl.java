@@ -11,6 +11,7 @@ import rw.pacis.tekanaewallet.model.CustomerWallet;
 import rw.pacis.tekanaewallet.model.Transaction;
 import rw.pacis.tekanaewallet.model.dtos.request.CreateTransactionDTO;
 import rw.pacis.tekanaewallet.model.dtos.response.GetMyTransactionDTO;
+import rw.pacis.tekanaewallet.model.enums.EUserStatus;
 import rw.pacis.tekanaewallet.repository.ICustomerWalletRepository;
 import rw.pacis.tekanaewallet.repository.ITransactionRepository;
 import rw.pacis.tekanaewallet.services.ICustomerService;
@@ -18,6 +19,7 @@ import rw.pacis.tekanaewallet.services.ITransactionService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,6 +50,7 @@ public class TransactionServiceImpl implements ITransactionService {
         if(senderWallet.getBalance().subtract(dto.getAmount()).compareTo(BigDecimal.ZERO) < 0) throw new BadRequestException("exceptions.badRequest.transaction.insufficientAmount");
 
         CustomerWallet receiverWallet = customerService.getWalletById(dto.getReceiverWalletId());
+        if(!receiverWallet.getCustomer().getStatus().equals(EUserStatus.ACTIVE)) throw new BadRequestException("exceptions.badRequest.invalidAction");
 
         senderWallet.setBalance(senderWallet.getBalance().subtract(dto.getAmount()));
         receiverWallet.setBalance(receiverWallet.getBalance().add(dto.getAmount()));
@@ -77,11 +80,19 @@ public class TransactionServiceImpl implements ITransactionService {
             if (fromAmount.compareTo(toAmount) > 0)  throw new BadRequestException("exceptions.badRequest.transaction.invalidAmount");
         }
 
-        return transactionRepository.searchAll(startDate, endDate, fromAmount, toAmount, customerId, pageable);
+        LocalDateTime startTime = startDate.atStartOfDay();
+        LocalDateTime endTime = endDate.atTime(23, 59, 59, 999_999_999);
+
+        return transactionRepository.searchAll(startTime, endTime, fromAmount, toAmount, customerId, pageable);
     }
 
     @Override
-    public Page<GetMyTransactionDTO> getMyTransactions(LocalDate startDate, LocalDate endDate, BigDecimal fromAmount, BigDecimal toAmount,  Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+    public Page<GetMyTransactionDTO> getMyTransactions(String walletId, LocalDate startDate, LocalDate endDate, BigDecimal fromAmount, BigDecimal toAmount,  Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+
+        CustomerWallet wallet = customerService.getWalletById(walletId);
+        Customer customer = customerService.getLoggedInCustomer();
+
+        if(!wallet.getCustomer().getId().equals(customer.getId())) throw new BadRequestException("exceptions.badRequest.invalidAction");
 
         if(startDate == null && endDate == null){
             endDate = LocalDate.now();
@@ -99,8 +110,9 @@ public class TransactionServiceImpl implements ITransactionService {
             if (fromAmount.compareTo(toAmount) > 0)  throw new BadRequestException("exceptions.badRequest.transaction.invalidAmount");
         }
 
-        Customer customer = customerService.getLoggedInCustomer();
+        LocalDateTime startTime = startDate.atStartOfDay();
+        LocalDateTime endTime = endDate.atTime(23, 59, 59, 999_999_999);
 
-        return transactionRepository.getMyTransactions(startDate, endDate, fromAmount, toAmount, customer.getId(), pageable);
+        return transactionRepository.getMyTransactions(walletId,fromAmount, toAmount, startTime, endTime, pageable);
     }
 }

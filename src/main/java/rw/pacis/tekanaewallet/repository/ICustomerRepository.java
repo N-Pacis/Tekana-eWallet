@@ -21,7 +21,7 @@ public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
 
     Optional<Customer> findByEmail(String email);
 
-    @Query("SELECT c FROM Customer c WHERE (:status IS NULL OR c.status =:status) AND (:gender IS NULL OR c.gender =:gender) AND (LOWER(CONCAT(TRIM(c.firstName), ' ', TRIM(c.lastName))) LIKE LOWER(CONCAT('%', :query, '%'))) OR LOWER(TRIM(c.email)) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(TRIM(c.phoneNumber)) LIKE LOWER(CONCAT('%', :query, '%')) ")
-    Page<Customer> searchAll(String query, EUserStatus status, EGender gender, Pageable pageable);
+    @Query("SELECT c FROM Customer c WHERE (:status IS NULL OR c.status =:status) AND (LOWER(CONCAT(TRIM(c.firstName), ' ', TRIM(c.lastName))) LIKE LOWER(CONCAT('%', :query, '%'))) OR LOWER(TRIM(c.email)) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(TRIM(c.phoneNumber)) LIKE LOWER(CONCAT('%', :query, '%')) ")
+    Page<Customer> searchAll(String query, EUserStatus status, Pageable pageable);
 
 }

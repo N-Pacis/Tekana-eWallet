@@ -70,8 +70,10 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     @Transactional
-    public CustomerWallet createWallet(UUID customerId, RegisterCustomerWalletDTO dto) throws ResourceNotFoundException {
+    public CustomerWallet createWallet(UUID customerId, RegisterCustomerWalletDTO dto) throws ResourceNotFoundException, BadRequestException {
         Customer customer = getById(customerId);
+        if(!customer.getStatus().equals(EUserStatus.ACTIVE)) throw new BadRequestException("exceptions.badRequest.invalidAction");
+
         String accountNumber = RandomUtil.randomNumber();
 
         while(customerWalletRepository.findById(accountNumber).isPresent()){
@@ -107,7 +109,7 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public Page<Customer> searchAll(String q, EUserStatus status, EGender gender, Pageable pageable){
-        return this.customerRepository.searchAll(q, status, gender, pageable);
+    public Page<Customer> searchAll(String q, EUserStatus status, Pageable pageable){
+        return this.customerRepository.searchAll(q, status, pageable);
     }
 }

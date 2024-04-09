@@ -16,8 +16,8 @@ import java.util.UUID;
 public interface IUserRepository extends JpaRepository<UserAccount, UUID> {
     Optional<UserAccount> findByEmail(String email);
 
-    @Query("SELECT u FROM UserAccount u WHERE (:status IS NULL OR u.status =:status) AND (:role IS NULL OR u.role =:role) AND (LOWER(CONCAT(TRIM(u.firstName), ' ', TRIM(u.lastName))) LIKE LOWER(CONCAT('%', :query, '%'))) OR LOWER(TRIM(u.email)) LIKE LOWER(CONCAT('%', :query, '%')) ")
-    Page<UserAccount> searchAll(String query, EUserStatus status, ERole role, Pageable pageable);
+    @Query("SELECT u FROM UserAccount u WHERE ((:status IS NULL OR u.status =:status) AND (LOWER(CONCAT(TRIM(u.firstName), ' ', TRIM(u.lastName))) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(TRIM(u.email)) LIKE LOWER(CONCAT('%', :query, '%')))) ")
+    Page<UserAccount> searchAll(String query, EUserStatus status, Pageable pageable);
 
     Optional<UserAccount> findBySessionIdAndId(UUID sessionId, UUID userId);
 

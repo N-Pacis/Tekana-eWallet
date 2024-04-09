@@ -12,6 +12,7 @@ import rw.pacis.tekanaewallet.exceptions.BadRequestException;
 import rw.pacis.tekanaewallet.exceptions.ResourceNotFoundException;
 import rw.pacis.tekanaewallet.model.UserAccount;
 import rw.pacis.tekanaewallet.model.UserAccountAudit;
+import rw.pacis.tekanaewallet.model.UserAccountLoginHistory;
 import rw.pacis.tekanaewallet.model.dtos.request.RegisterUserDTO;
 import rw.pacis.tekanaewallet.model.dtos.request.SetPasswordDTO;
 import rw.pacis.tekanaewallet.model.enums.EAuditType;
@@ -19,13 +20,13 @@ import rw.pacis.tekanaewallet.model.enums.ERole;
 import rw.pacis.tekanaewallet.model.enums.EUserStatus;
 import rw.pacis.tekanaewallet.model.enums.ErrorCode;
 import rw.pacis.tekanaewallet.repository.IUserAccountAuditRepository;
+import rw.pacis.tekanaewallet.repository.IUserAccountLoginHistoryRepository;
 import rw.pacis.tekanaewallet.repository.IUserRepository;
 import rw.pacis.tekanaewallet.security.dtos.CustomUserDTO;
 import rw.pacis.tekanaewallet.security.service.IJwtService;
 import rw.pacis.tekanaewallet.services.IAuthenticationService;
 import rw.pacis.tekanaewallet.services.IUserService;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,12 +43,15 @@ public class UserServiceImpl implements IUserService {
 
     private final IUserAccountAuditRepository userAccountAuditRepository;
 
-    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, IJwtService jwtService, @Lazy IAuthenticationService authenticationService, IUserAccountAuditRepository userAccountAuditRepository) {
+    private final IUserAccountLoginHistoryRepository userAccountLoginHistoryRepository;
+
+    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, IJwtService jwtService, @Lazy IAuthenticationService authenticationService, IUserAccountAuditRepository userAccountAuditRepository, IUserAccountLoginHistoryRepository userAccountLoginHistoryRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.userAccountAuditRepository = userAccountAuditRepository;
+        this.userAccountLoginHistoryRepository = userAccountLoginHistoryRepository;
     }
 
 
@@ -89,6 +93,8 @@ public class UserServiceImpl implements IUserService {
 
         UserAccount user = new UserAccount(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(ERole.ADMIN);
+        user.setStatus(EUserStatus.ACTIVE);
         this.userRepository.save(user);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
@@ -133,8 +139,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Page<UserAccount> searchAll(String q, ERole role, EUserStatus status, Pageable pageable) {
-        return this.userRepository.searchAll(q, status,role, pageable);
+    public Page<UserAccount> searchAll(String q, EUserStatus status, Pageable pageable) {
+        return this.userRepository.searchAll(q, status, pageable);
     }
 
     @Override
@@ -161,9 +167,16 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException {
+    public Page<UserAccountAudit> getAuditByUser(UUID id, Pageable pageable) throws ResourceNotFoundException {
         UserAccount user = getById(id);
 
-        return userAccountAuditRepository.findAllByUserAccount(user);
+        return userAccountAuditRepository.findAllByUserAccount(user, pageable);
+    }
+
+    @Override
+    public Page<UserAccountLoginHistory> getUserLoginHistory(UUID id, Pageable pageable) throws ResourceNotFoundException {
+        UserAccount user = getById(id);
+
+        return userAccountLoginHistoryRepository.findByUser(user, pageable);
     }
 }

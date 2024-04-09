@@ -14,13 +14,12 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class GetMyTransactionDTO {
 
     private UUID id;
 
-    private ETransactionType type;
+    private String type;
 
     private String receiverNames;
 
@@ -35,9 +34,9 @@ public class GetMyTransactionDTO {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime doneAt;
 
-    public GetMyTransactionDTO(UUID id, String type, String receiverNames, String receiverWalletId, String senderNames, String senderWalletId, BigDecimal amount, LocalDateTime doneAt){
+    public GetMyTransactionDTO(UUID id,String type, String receiverNames, String receiverWalletId, String senderNames, String senderWalletId, BigDecimal amount, LocalDateTime doneAt){
         this.id = id;
-        this.type = ETransactionType.fromValue(type);
+        this.type = type;
         this.receiverNames = receiverNames;
         this.receiverWalletId = receiverWalletId;
         this.senderNames = senderNames;

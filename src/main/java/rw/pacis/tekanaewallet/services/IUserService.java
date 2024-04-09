@@ -7,6 +7,7 @@ import rw.pacis.tekanaewallet.exceptions.BadRequestException;
 import rw.pacis.tekanaewallet.exceptions.ResourceNotFoundException;
 import rw.pacis.tekanaewallet.model.UserAccount;
 import rw.pacis.tekanaewallet.model.UserAccountAudit;
+import rw.pacis.tekanaewallet.model.UserAccountLoginHistory;
 import rw.pacis.tekanaewallet.model.dtos.request.RegisterUserDTO;
 import rw.pacis.tekanaewallet.model.dtos.request.SetPasswordDTO;
 import rw.pacis.tekanaewallet.model.enums.ERole;
@@ -26,10 +27,13 @@ public interface IUserService {
 
     UserAccount deactivate(UUID userId) throws ResourceNotFoundException, BadRequestException;
 
-    Page<UserAccount> searchAll(String q, ERole role, EUserStatus status, Pageable pageable) throws ResourceNotFoundException;
+    Page<UserAccount> searchAll(String q, EUserStatus status, Pageable pageable) throws ResourceNotFoundException;
 
     @Transactional
     UserAccount resetPassword(UUID id, SetPasswordDTO passwordDTO) throws ResourceNotFoundException, BadRequestException;
 
-    List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException;
+    Page<UserAccountAudit> getAuditByUser(UUID id, Pageable pageable) throws ResourceNotFoundException;
+
+    Page<UserAccountLoginHistory> getUserLoginHistory(UUID id, Pageable pageable) throws ResourceNotFoundException;
+
 }
