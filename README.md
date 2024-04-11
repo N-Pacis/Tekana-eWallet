@@ -2,26 +2,31 @@
 
 ## I. Running the App
 
-### 1. Clone the Repository
+### 1. Technologies used
+ - Java: Spring Boot
+ - PostgresSQL database
+ - Swagger UI
+
+### 2. Clone the Repository
 
 Open your terminal or command prompt and run the following command to clone the repository:
 `git clone https://github.com/N-Pacis/Tekana-eWallet.git`
 
-### 2. Create a PostgresSQL Database
+### 3. Create a PostgresSQL Database
 
 Open your PostgresSQL client (e.g., pgAdmin, psql, etc.) and create a new database named `tekana_ewallet`.
 
-### 3. Navigate to the Project Directory
+### 4. Navigate to the Project Directory
 
 In your terminal or command prompt, navigate to the directory where you cloned the repository.
 
-### 4. Update Database Credentials
+### 5. Update Database Credentials
 
 1. In the project directory, locate the `src/main/resources/application-dev.properties` file.
 2. Open the file in a text editor.
 3. Update the database credentials (`spring.datasource.username` and `spring.datasource.password`) according to your PostgresSQL setup.
 
-### 5. Option 1: Using IntelliJ IDEA (Recommended)
+### 6. Option 1: Using IntelliJ IDEA (Recommended)
 
 If you have IntelliJ IDEA installed:
 
@@ -29,7 +34,7 @@ If you have IntelliJ IDEA installed:
 2. Wait for the project to load and the dependencies to be resolved.
 3. Click the "Run" button to run the application.
 
-### 6. Option 2: Using Maven (If IntelliJ IDEA is not installed)
+### 7. Option 2: Using Maven (If IntelliJ IDEA is not installed)
 
 If you don't have IntelliJ IDEA installed:
 
@@ -38,11 +43,11 @@ If you don't have IntelliJ IDEA installed:
 3. Run the following command to clean and install the project dependencies: `mvn clean install`
 4. After the installation is complete, run the following command to start the application:`mvn spring-boot:run`
 
-### 7. Access the Application
+### 8. Access the Application
 
 Once the application is running, open your web browser and navigate to `http://localhost:8080/swagger-ui/index.html#/`. You should see the Swagger UI documentation for the application.
 
-### 8. Explore and Use the Application
+### 9. Explore and Use the Application
 
 In the Swagger UI, you can:
 
