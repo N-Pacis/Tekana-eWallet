@@ -166,7 +166,7 @@ Currently, we have developed the Minimum Viable Product (MVP) of our application
   - We need to conduct trainings for admin users and a selected group of customers to ensure that they are familiar with the system before going live.
   - We need to create a dedicated support group available 24/7 for the first 6 months after going live to help clients in case they face any issues.
   - We need to set up email communications that will continue to be a source of communication between clients and our company.
-  - We also need to restrict deployment to production and grant push access to a limited number of users to ensure that the environment is not altered easily.
+  - We also need to restrict deployment to production and grant push access to a limited number of developers to ensure that the environment is not altered easily.
   - We need to setup a CI/CD pipeline to handle automated deployment and also ensure the application's quality by running the tests before the changes are deployed.
 
 
